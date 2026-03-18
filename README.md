@@ -160,8 +160,8 @@ npm run dev
 ## 🔐 Autenticação
 
 * `POST /api/register` → Criar usuário
-* Exemplo
-* {
+ Exemplo
+ {
    "name": "Pessoa",
    "email": "pessoa1@email.com",
    "password": "password"

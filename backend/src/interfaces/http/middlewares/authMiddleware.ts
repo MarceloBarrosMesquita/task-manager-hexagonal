@@ -25,3 +25,5 @@ export function authMiddleware(
     throw new AppError("Invalid token", 401)
   }
 }
+
+

@@ -7,15 +7,15 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.error(err)
-
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
-      error: err.message
+      message: err.message
     })
   }
 
+  console.error(err)
+
   return res.status(500).json({
-    error: "Internal server error"
+    message: "Internal server error"
   })
 }

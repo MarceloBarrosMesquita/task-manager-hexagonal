@@ -5,6 +5,7 @@ export class GetTasksByUserUseCase {
   constructor(private repository: TaskRepository) {}
 
   async execute(userId: string): Promise<Task[]> {
+    
     return this.repository.findByUser(userId) 
   }
 }
