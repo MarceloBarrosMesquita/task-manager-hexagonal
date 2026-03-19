@@ -1,34 +1,65 @@
 import { CreateTaskUseCase } from "../application/usecases/CreateTaskUseCase"
 
-// Cria um repositório falso (mock) para simular o comportamento do banco.
-// Assim conseguimos testar o UseCase sem depender de banco de dados real.
-const mockRepository = {
-
- create: jest.fn() // função simulada do Jest
-
-}
-
 describe("CreateTaskUseCase", () => {
 
- // Teste que verifica se uma tarefa é criada corretamente
+ let mockRepository: any
+
+ beforeEach(() => {
+  mockRepository = {
+   create: jest.fn()
+  }
+ })
+
  it("should create a task", async () => {
 
-  // Instancia o UseCase passando o repositório mockado
-  const usecase = new CreateTaskUseCase(
-   mockRepository as any
-  )
-
-  // Executa o caso de uso com dados de teste
-  await usecase.execute({
-
+  const taskData = {
    title: "Test task",
    userId: "user1"
+  }
 
-  })
+  const fakeResponse = {
+   id: "1",
+   title: "Test task",
+   userId: "user1",
+   completed: false,
+   createdAt: new Date(),
+   description: undefined
+  }
 
-  // Verifica se o método create do repositório foi chamado
-  // Isso confirma que o UseCase tentou salvar a tarefa
+  mockRepository.create.mockResolvedValue(fakeResponse)
+
+  const usecase = new CreateTaskUseCase(mockRepository)
+
+  const result = await usecase.execute(taskData)
+
+  // ✔️ valida que chamou o repository com os dados corretos (mesmo com campos extras)
+  expect(mockRepository.create).toHaveBeenCalledWith(
+   expect.objectContaining({
+    title: "Test task",
+    userId: "user1"
+   })
+  )
+
+  // ✔️ valida que foi chamado
   expect(mockRepository.create).toHaveBeenCalled()
+
+  // ✔️ valida retorno
+  expect(result).toEqual(fakeResponse)
+
+ })
+
+ it("should propagate repository error", async () => {
+
+  mockRepository.create.mockRejectedValue(new Error("DB error"))
+
+  const usecase = new CreateTaskUseCase(mockRepository)
+
+  await expect(
+   usecase.execute({
+    title: "Test task",
+    userId: "user1"
+   })
+  ).rejects.toThrow("DB error")
 
  })
 
